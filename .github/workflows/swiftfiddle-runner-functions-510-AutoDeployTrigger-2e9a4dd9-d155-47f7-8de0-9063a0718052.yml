@@ -1,0 +1,48 @@
+name: Trigger auto deployment for swiftfiddle-runner-functions-510
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/swiftfiddle-runner-functions-510-AutoDeployTrigger-2e9a4dd9-d155-47f7-8de0-9063a0718052.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: swiftfiddle.azurecr.io
+          registryUsername: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_REGISTRY_PASSWORD }}
+          containerAppName: swiftfiddle-runner-functions-510
+          resourceGroup: swiftfiddle
+          imageToBuild: swiftfiddle.azurecr.io/swiftfiddle-runner-functions-510:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
