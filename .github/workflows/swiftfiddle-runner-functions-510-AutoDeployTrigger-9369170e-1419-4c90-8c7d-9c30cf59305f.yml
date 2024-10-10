@@ -4,19 +4,18 @@ name: Trigger auto deployment for swiftfiddle-runner-functions-510
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ main ]
+    branches: [main]
     paths:
-    - '**'
-    - '.github/workflows/swiftfiddle-runner-functions-510-AutoDeployTrigger-9369170e-1419-4c90-8c7d-9c30cf59305f.yml'
+      - "**"
+      - ".github/workflows/swiftfiddle-runner-functions-510-AutoDeployTrigger-9369170e-1419-4c90-8c7d-9c30cf59305f.yml"
 
-  # Allow manual trigger 
-  workflow_dispatch:      
+  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       id-token: write #This is required for requesting the OIDC JWT Token
       contents: read #Required when GH token is used to authenticate with private repo
 
@@ -41,8 +40,6 @@ jobs:
           registryPassword: ${{ secrets.SWIFTFIDDLERUNNERFUNCTIONS510_REGISTRY_PASSWORD }}
           containerAppName: swiftfiddle-runner-functions-510
           resourceGroup: swiftfiddle
-          imageToBuild: kishikawakatsumi/swiftfiddle-runner-functions-510:${{ github.sha }}
+          imageToBuild: swiftfiddle/swiftfiddle-runner-functions-510:latest
           _buildArgumentsKey_: |
             _buildArgumentsValues_
-
-
